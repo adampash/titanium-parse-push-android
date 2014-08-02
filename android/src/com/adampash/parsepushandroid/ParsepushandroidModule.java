@@ -15,51 +15,72 @@ import org.appcelerator.titanium.TiApplication;
 import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
 
+import android.app.Activity;
+
+import java.util.HashMap;
+
+import com.parse.Parse;
+import com.parse.ParseInstallation;
+import com.parse.PushService;
 
 @Kroll.module(name="Parsepushandroid", id="com.adampash.parsepushandroid")
 public class ParsepushandroidModule extends KrollModule
 {
 
-	// Standard Debugging variables
-	private static final String LCAT = "ParsepushandroidModule";
-	private static final boolean DBG = TiConfig.LOGD;
+  // Standard Debugging variables
+  private static final String LCAT = "ParsepushandroidModule";
+  private static final boolean DBG = TiConfig.LOGD;
 
-	// You can define constants with @Kroll.constant, for example:
-	// @Kroll.constant public static final String EXTERNAL_NAME = value;
+  // You can define constants with @Kroll.constant, for example:
+  // @Kroll.constant public static final String EXTERNAL_NAME = value;
 
-	public ParsepushandroidModule()
-	{
-		super();
-	}
+  public ParsepushandroidModule()
+  {
+    super();
+  }
 
-	@Kroll.onAppCreate
-	public static void onAppCreate(TiApplication app)
-	{
-		Log.d(LCAT, "inside onAppCreate");
-		// put module init code that needs to run when the application is created
-	}
-
-	// Methods
-	@Kroll.method
-	public String example()
-	{
-		Log.d(LCAT, "example called");
-		return "hello world";
-	}
-
-	// Properties
-	@Kroll.getProperty
-	public String getExampleProp()
-	{
-		Log.d(LCAT, "get example property");
-		return "hello world";
-	}
+  @Kroll.onAppCreate
+  public static void onAppCreate(TiApplication app)
+  {
+    Log.d(LCAT, "inside onAppCreate");
+    // put module init code that needs to run when the application is created
+  }
 
 
-	@Kroll.setProperty
-	public void setExampleProp(String value) {
-		Log.d(LCAT, "set example property: " + value);
-	}
+  public TiApplication appContext = TiApplication.getInstance();
+  public Activity activity = appContext.getCurrentActivity();
+
+  // Methods
+  @Kroll.method
+  /* public String setup(HashMap<String, String> parseKeys) */
+  public void initialize(String appId, String clientId)
+  {
+    Log.d(LCAT, "example called");
+    Parse.initialize(appContext, appId, clientId);
+    PushService.setDefaultPushCallback(appContext, MainActivity.class);
+  }
+
+  @Kroll.method
+  public void subscribe(String channel) {
+    PushService.subscribe(appContext, "Giants", MainActivity.class);
+    PushService.subscribe(appContext, channel, MainActivity.class);
+  }
+
+
+
+  // Properties
+  /* @Kroll.getProperty */
+  /* public String getExampleProp() */
+  /* { */
+  /*   Log.d(LCAT, "get example property"); */
+  /*   return "hello world"; */
+  /* } */
+
+
+  /* @Kroll.setProperty */
+  /* public void setExampleProp(String value) { */
+  /*   Log.d(LCAT, "set example property: " + value); */
+  /* } */
 
 }
 

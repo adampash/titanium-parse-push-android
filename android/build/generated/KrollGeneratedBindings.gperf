@@ -1,0 +1,18 @@
+%define lookup-function-name lookupGeneratedInit
+%define class-name ParsepushandroidBindings
+%{
+
+#include <string.h>
+#include <v8.h>
+#include <KrollBindings.h>
+
+#include "com.adampash.parsepushandroid.ExampleProxy.h"
+#include "com.adampash.parsepushandroid.ParsepushandroidModule.h"
+
+
+%}
+struct titanium::bindings::BindEntry;
+%%
+com.adampash.parsepushandroid.ExampleProxy, ::com::adampash::parsepushandroid::parsepushandroid::ExampleProxy::bindProxy, ::com::adampash::parsepushandroid::parsepushandroid::ExampleProxy::dispose
+com.adampash.parsepushandroid.ParsepushandroidModule, ::com::adampash::parsepushandroid::ParsepushandroidModule::bindProxy, ::com::adampash::parsepushandroid::ParsepushandroidModule::dispose
+%%
