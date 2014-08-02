@@ -93,6 +93,7 @@ Handle<FunctionTemplate> ParsepushandroidModule::getProxyTemplate()
 	DEFINE_PROTOTYPE_METHOD(proxyTemplate, "subscribe", ParsepushandroidModule::subscribe);
 	DEFINE_PROTOTYPE_METHOD(proxyTemplate, "setup", ParsepushandroidModule::setup);
 	DEFINE_PROTOTYPE_METHOD(proxyTemplate, "example", ParsepushandroidModule::example);
+	DEFINE_PROTOTYPE_METHOD(proxyTemplate, "initialize", ParsepushandroidModule::initialize);
 
 	Local<ObjectTemplate> prototypeTemplate = proxyTemplate->PrototypeTemplate();
 	Local<ObjectTemplate> instanceTemplate = proxyTemplate->InstanceTemplate();
@@ -126,9 +127,9 @@ Handle<Value> ParsepushandroidModule::subscribe(const Arguments& args)
 	}
 	static jmethodID methodID = NULL;
 	if (!methodID) {
-		methodID = env->GetMethodID(ParsepushandroidModule::javaClass, "subscribe", "(Ljava/lang/String;)Ljava/lang/Boolean;");
+		methodID = env->GetMethodID(ParsepushandroidModule::javaClass, "subscribe", "(Ljava/lang/String;)V");
 		if (!methodID) {
-			const char *error = "Couldn't find proxy method 'subscribe' with signature '(Ljava/lang/String;)Ljava/lang/Boolean;'";
+			const char *error = "Couldn't find proxy method 'subscribe' with signature '(Ljava/lang/String;)V'";
 			LOGE(TAG, error);
 				return titanium::JSException::Error(error);
 		}
@@ -158,9 +159,7 @@ Handle<Value> ParsepushandroidModule::subscribe(const Arguments& args)
 	}
 
 	jobject javaProxy = proxy->getJavaObject();
-	jobject jResult = (jobject)env->CallObjectMethodA(javaProxy, methodID, jArguments);
-
-
+	env->CallVoidMethodA(javaProxy, methodID, jArguments);
 
 	if (!JavaObject::useGlobalRefs) {
 		env->DeleteLocalRef(javaProxy);
@@ -172,21 +171,14 @@ Handle<Value> ParsepushandroidModule::subscribe(const Arguments& args)
 
 
 	if (env->ExceptionCheck()) {
-		Handle<Value> jsException = titanium::JSException::fromJavaException();
+		titanium::JSException::fromJavaException();
 		env->ExceptionClear();
-		return jsException;
 	}
 
-	if (jResult == NULL) {
-		return Null();
-	}
-
-	Handle<Value> v8Result = titanium::TypeConverter::javaObjectToJsValue(env, jResult);
-
-	env->DeleteLocalRef(jResult);
 
 
-	return v8Result;
+
+	return v8::Undefined();
 
 }
 Handle<Value> ParsepushandroidModule::setup(const Arguments& args)
@@ -326,6 +318,84 @@ Handle<Value> ParsepushandroidModule::example(const Arguments& args)
 
 
 	return v8Result;
+
+}
+Handle<Value> ParsepushandroidModule::initialize(const Arguments& args)
+{
+	LOGD(TAG, "initialize()");
+	HandleScope scope;
+
+	JNIEnv *env = titanium::JNIScope::getEnv();
+	if (!env) {
+		return titanium::JSException::GetJNIEnvironmentError();
+	}
+	static jmethodID methodID = NULL;
+	if (!methodID) {
+		methodID = env->GetMethodID(ParsepushandroidModule::javaClass, "initialize", "(Ljava/lang/String;Ljava/lang/String;)V");
+		if (!methodID) {
+			const char *error = "Couldn't find proxy method 'initialize' with signature '(Ljava/lang/String;Ljava/lang/String;)V'";
+			LOGE(TAG, error);
+				return titanium::JSException::Error(error);
+		}
+	}
+
+	titanium::Proxy* proxy = titanium::Proxy::unwrap(args.Holder());
+
+	if (args.Length() < 2) {
+		char errorStringBuffer[100];
+		sprintf(errorStringBuffer, "initialize: Invalid number of arguments. Expected 2 but got %d", args.Length());
+		return ThrowException(Exception::Error(String::New(errorStringBuffer)));
+	}
+
+	jvalue jArguments[2];
+
+
+
+
+	
+	
+	if (!args[0]->IsNull()) {
+		Local<Value> arg_0 = args[0];
+		jArguments[0].l =
+			titanium::TypeConverter::jsValueToJavaString(env, arg_0);
+	} else {
+		jArguments[0].l = NULL;
+	}
+
+	
+	
+	if (!args[1]->IsNull()) {
+		Local<Value> arg_1 = args[1];
+		jArguments[1].l =
+			titanium::TypeConverter::jsValueToJavaString(env, arg_1);
+	} else {
+		jArguments[1].l = NULL;
+	}
+
+	jobject javaProxy = proxy->getJavaObject();
+	env->CallVoidMethodA(javaProxy, methodID, jArguments);
+
+	if (!JavaObject::useGlobalRefs) {
+		env->DeleteLocalRef(javaProxy);
+	}
+
+
+
+				env->DeleteLocalRef(jArguments[0].l);
+
+
+				env->DeleteLocalRef(jArguments[1].l);
+
+
+	if (env->ExceptionCheck()) {
+		titanium::JSException::fromJavaException();
+		env->ExceptionClear();
+	}
+
+
+
+
+	return v8::Undefined();
 
 }
 

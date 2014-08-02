@@ -16,6 +16,7 @@ import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
 
 import android.app.Activity;
+import android.os.Bundle;
 
 import java.util.HashMap;
 
@@ -52,18 +53,34 @@ public class ParsepushandroidModule extends KrollModule
 
   // Methods
   @Kroll.method
-  /* public String setup(HashMap<String, String> parseKeys) */
   public void initialize(String appId, String clientId)
   {
     Log.d(LCAT, "example called");
     Parse.initialize(appContext, appId, clientId);
-    PushService.setDefaultPushCallback(appContext, MainActivity.class);
+    /* PushService.setDefaultPushCallback(appContext, MainActivity.class); */
+    PushService.setDefaultPushCallback(appContext, ReceivePush.class);
   }
 
   @Kroll.method
   public void subscribe(String channel) {
-    PushService.subscribe(appContext, "Giants", MainActivity.class);
-    PushService.subscribe(appContext, channel, MainActivity.class);
+    PushService.subscribe(appContext, channel, ReceivePush.class);
+  }
+
+  class ReceivePush extends Activity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+      /* super.onCreate(savedInstanceState); */
+
+      // Track app opens.
+      /* ParseAnalytics.trackAppOpened(getIntent()); */
+
+      /* Intent intent = new Intent(); */
+      /* intent.setAction(Intent.ACTION_VIEW); */
+      /* intent.setData(uri); */
+      /* Activity activity = TiApplication.getAppRootOrCurrentActivity(); */
+      /* activity.startActivity(); */
+
+    }
   }
 
 
