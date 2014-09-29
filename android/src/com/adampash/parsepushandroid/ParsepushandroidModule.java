@@ -16,7 +16,9 @@ import org.appcelerator.kroll.common.Log;
 import org.appcelerator.kroll.common.TiConfig;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import java.util.HashMap;
 
@@ -40,16 +42,30 @@ public class ParsepushandroidModule extends KrollModule
     super();
   }
 
+  public TiApplication appContext = TiApplication.getInstance();
+  public Activity activity = appContext.getCurrentActivity();
+
   @Kroll.onAppCreate
   public static void onAppCreate(TiApplication app)
   {
     Log.d(LCAT, "inside onAppCreate");
     // put module init code that needs to run when the application is created
+    /* Toast.makeText(activity, "app create", Toast.LENGTH_LONG) */
+    /*   .show(); */
   }
 
+  public void onResume(Activity thisActivity) {
+    Log.d(LCAT, "inside onResume");
+      /* Toast.makeText(activity, "Resume", Toast.LENGTH_LONG) */
+      /*   .show(); */
+  }
 
-  public TiApplication appContext = TiApplication.getInstance();
-  public Activity activity = appContext.getCurrentActivity();
+  public void onStart(Activity thisActivity) {
+    Log.d(LCAT, "inside onStart");
+      /* Toast.makeText(activity, "Start", Toast.LENGTH_LONG) */
+      /*   .show(); */
+  }
+
 
   // Methods
   @Kroll.method
@@ -57,47 +73,31 @@ public class ParsepushandroidModule extends KrollModule
   {
     Log.d(LCAT, "example called");
     Parse.initialize(appContext, appId, clientId);
-    /* PushService.setDefaultPushCallback(appContext, MainActivity.class); */
-    PushService.setDefaultPushCallback(appContext, ReceivePush.class);
+    PushService.setDefaultPushCallback(appContext, activity.getClass());
+    /* PushService.setDefaultPushCallback(appContext, ReceiveActivity.class); */
   }
 
   @Kroll.method
   public void subscribe(String channel) {
-    PushService.subscribe(appContext, channel, ReceivePush.class);
+    /* PushService.subscribe(appContext, channel, ReceiveActivity.class); */
+    PushService.subscribe(appContext, channel, activity.getClass());
   }
 
-  class ReceivePush extends Activity {
-    @Override
+  public class ReceiveActivity extends Activity {
+
     protected void onCreate(Bundle savedInstanceState) {
-      /* super.onCreate(savedInstanceState); */
+
+      super.onCreate(savedInstanceState);
 
       // Track app opens.
       /* ParseAnalytics.trackAppOpened(getIntent()); */
 
-      /* Intent intent = new Intent(); */
-      /* intent.setAction(Intent.ACTION_VIEW); */
+      Intent intent = new Intent();
+      intent.setAction(Intent.ACTION_VIEW);
       /* intent.setData(uri); */
-      /* Activity activity = TiApplication.getAppRootOrCurrentActivity(); */
-      /* activity.startActivity(); */
-
+      Activity activity = TiApplication.getAppRootOrCurrentActivity();
+      activity.startActivity(intent);
     }
+
   }
-
-
-
-  // Properties
-  /* @Kroll.getProperty */
-  /* public String getExampleProp() */
-  /* { */
-  /*   Log.d(LCAT, "get example property"); */
-  /*   return "hello world"; */
-  /* } */
-
-
-  /* @Kroll.setProperty */
-  /* public void setExampleProp(String value) { */
-  /*   Log.d(LCAT, "set example property: " + value); */
-  /* } */
-
 }
-
