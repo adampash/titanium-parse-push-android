@@ -1,6 +1,7 @@
 This is buggy. Not for production use. Happy to accept help.
 
-===Usage===
+Usage
+====
 
 ```javascript
 AndroidPush = require('com.adampash.parsepushandroid')
